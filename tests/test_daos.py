@@ -55,6 +55,7 @@ def test_leer_ingreso_y_gasto():
     dao = Dao(ruta)
     
     movimiento1 = dao.leer()
+
     assert movimiento1 == Ingreso("Ingreso", date(1999, 12, 31), 12.34)
     
     movimiento2 = dao.leer()
