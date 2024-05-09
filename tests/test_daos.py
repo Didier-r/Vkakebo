@@ -30,7 +30,10 @@ def test_guardar_ingreso_y_gasto():
     dao = Dao(ruta)
     ing = Ingreso("Un concepto", date(1999, 12, 31), 12.34)
     dao.grabar(ing)
-    gasto = Gasto("Un gasto", date(2000, 1, 1), 23.45, CategoriaGastos.EXTRAS)
+    gasto = Gasto("Un gasto",
+                  date(2000, 1, 1),
+                  23.45, 
+                  CategoriaGastos.EXTRAS)
     dao.grabar(gasto)
 
     with open(ruta, "r") as f:
@@ -42,8 +45,26 @@ def test_guardar_ingreso_y_gasto():
         registro = f.readline()
         assert registro == ""
 
+def test_leer_ingreso_y_gasto():
+    ruta = "datos/test_movimientos.csv"
+    with open(ruta, "w", newline="") as f:
+        f.write("concepto,fecha,cantidad,categoria\n")
+        f.write("Ingreso,1999-12-31,12.34,\n")
+        f.write("Gasto,1999-01-01,55.0,4\n")
 
+    dao = Dao(ruta)
+    
+    movimiento1 = dao.leer()
+    assert movimiento1 == Ingreso("Ingreso", date(1999, 12, 31), 12.34)
+    
+    movimiento2 = dao.leer()
+    assert movimiento2 == Gasto("Gasto", date(1999, 1, 1), 55, CategoriaGastos.EXTRAS)
+   
+    movimiento3 = dao.leer()
+    assert movimiento3 is None
 
-
+    
+    
+    
 
     
