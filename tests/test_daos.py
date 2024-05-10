@@ -13,9 +13,16 @@
 """
 from kakebo.modelos import Dao, Ingreso, Gasto, CategoriaGastos
 from datetime import date
+import os
+
+def borrar_fichero(path):
+    if os.path.exists(path):
+        os.remove(path)
+
 
 def test_crear_dao():
     ruta = "datos/test_movimientos.csv"
+    borrar_fichero(ruta)
     dao = Dao(ruta)
     assert dao.ruta == ruta
 
@@ -27,6 +34,7 @@ def test_crear_dao():
 
 def test_guardar_ingreso_y_gasto():
     ruta = "datos/test_movimientos.csv"
+    borrar_fichero(ruta)
     dao = Dao(ruta)
     ing = Ingreso("Un concepto", date(1999, 12, 31), 12.34)
     dao.grabar(ing)
