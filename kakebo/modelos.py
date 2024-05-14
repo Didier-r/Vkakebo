@@ -1,6 +1,7 @@
 from datetime import date
 from enum import Enum
 import csv
+import sqlite3
 import os
 
 class Movimiento:
@@ -113,4 +114,21 @@ class DaoCSV:
 class DaoSqlite:
     def __init__(self, ruta):
         self.ruta = ruta
+    
+    def leer(self, id):
+        con = sqlite3.connect(self.ruta)
+        cur = con.cursor()
+        
+        query = "SELECT id, tipo_movimiento, concepto, fecha, cantidad, categoria FROM movimientos WHERE id = ?"
+        
+        res = cur.execute(query, (id,))
+        valores = res.fetchone()
+        con.close()
+        
+        if valores:
+            if valores[1] == "I":
+                return Ingreso(valores[2], date.fromisoformat(valores[3]), valores[4])
+            elif valores[1] == "G":
+                return Gasto(valores[2], date.fromisoformat(valores[3]), valores[4], CategoriaGastos(valores[5]))
             
+        return None

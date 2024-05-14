@@ -96,6 +96,7 @@ def test_leer_dao_sqlite():
                             (2, "G", "Un gasto cualquiera", date(2024, 5, 1), 123, 3)))
     
     con.commit()
+    con.close()
     
     dao = DaoSqlite(RUTA_SQLITE)
     
@@ -105,7 +106,36 @@ def test_leer_dao_sqlite():
     movimiento = dao.leer(2)
     assert movimiento == Gasto("Un gasto cualquiera", date(2024,5,1), 123, CategoriaGastos.OCIO_VICIO)
 
+def test_grabar_sqlite():
+    # Preparar la tabla movimientos como toca, borrar e insertar un ingreso y un gasto
+    con = sqlite3.connect(RUTA_SQLITE)
+    cur = con.cursor()
 
+    query = "DELETE FROM movimientos;"
+    cur.execute(query)
+    con.commit()
+    con.close()
+    
+    ing = Ingreso("Un concepto cualquiera", date(1990,1,1), 123)
+    dao = DaoSqlite(RUTA_SQLITE)
+    dao.grabar(ing)
+    
+    con = sqlite3.connect(RUTA_SQLITE)
+    cur = con.cursor()
+    
+    query = "SELECT id, tipo_movimiento, concepto, fecha, cantidad, categoria FROM movimientos order by id desc LIMIT 1"
+    res = cur.execute(query)
+    fila = res.fetchone()
+    
+    assert fila[1] == "I"
+    assert fila[2] == "Un concepto cualquiera"
+    assert fila[3] == "1990-01-01"
+    assert fila[4] == 123.0
+    assert fila[5] is None
+    
+    
+    
+    
 
     
 
