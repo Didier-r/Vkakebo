@@ -161,7 +161,14 @@ class DaoSqlite:
         con.close()
         
     def borrar(self, id):
-        pass
+        con = sqlite3.connect(self.ruta)
+        cur = con.cursor()
+        
+        query = "DELETE FROM movimientos where id = ?"
+        cur.execute(query, (id,))
+        con.commit()
+        con.close()
+
         
        
         

@@ -164,7 +164,28 @@ def test_update_sqlite():
     assert modificado.fecha == date(2024, 1, 4)
     assert modificado.cantidad == 32.0
     
+def test_delete_sqlite():
+    # Preparar el test
+    borrar_movimientos_sqlite()
+
     
+    con = sqlite3.connect(RUTA_SQLITE)
+    cur = con.cursor()
+    
+    query = "INSERT INTO movimientos (id, tipo_movimiento, concepto, fecha, cantidad) VALUES (1,'I', 'Concepto original', '0001-01-01', 0.1)"
+    
+    cur.execute(query)
+    con.commit()
+    con.close()
+    
+    # Lanzar la prueba
+    dao = DaoSqlite(RUTA_SQLITE)
+    movimiento = dao.leer(1)
+    assert not movimiento is None
+    
+    dao.borrar(1)
+    movimiento = dao.leer(1)
+    assert movimiento is None    
     
     
     
