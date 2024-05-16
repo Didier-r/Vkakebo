@@ -169,6 +169,11 @@ class DaoSqlite:
         con.commit()
         con.close()
 
+    def leerTodos(self):
+        """
+        Devuelve una lista con todos los registros de la tabla movimientos ordenados por id ascendente y cada item de la lista debe ser una instacia de Ingreso o Gasto (no la tupla que devuelve sqlite3)
+        """        
+        pass
         
        
         

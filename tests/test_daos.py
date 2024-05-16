@@ -168,7 +168,7 @@ def test_delete_sqlite():
     # Preparar el test
     borrar_movimientos_sqlite()
 
-    
+    """     
     con = sqlite3.connect(RUTA_SQLITE)
     cur = con.cursor()
     
@@ -176,10 +176,15 @@ def test_delete_sqlite():
     
     cur.execute(query)
     con.commit()
-    con.close()
-    
+    con.close() 
+    """
     # Lanzar la prueba
+    
+    
     dao = DaoSqlite(RUTA_SQLITE)
+    mov = Ingreso("Nuevo concepto", date.today(), 1100)
+    dao.grabar(mov)
+    
     movimiento = dao.leer(1)
     assert not movimiento is None
     
