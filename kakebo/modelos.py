@@ -168,8 +168,6 @@ class DaoSqlite:
         cur.execute(query, (id,))
         con.commit()
         con.close()
-
-    
      
     def leerTodo(self):
         con = sqlite3.connect(self.ruta)
