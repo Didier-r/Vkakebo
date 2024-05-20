@@ -168,7 +168,7 @@ def test_delete_sqlite():
     # Preparar el test
     borrar_movimientos_sqlite()
 
-    """     
+   
     con = sqlite3.connect(RUTA_SQLITE)
     cur = con.cursor()
     
@@ -177,13 +177,13 @@ def test_delete_sqlite():
     cur.execute(query)
     con.commit()
     con.close() 
-    """
+    
     # Lanzar la prueba
     
     
     dao = DaoSqlite(RUTA_SQLITE)
-    mov = Ingreso("Nuevo concepto", date.today(), 1100)
-    dao.grabar(mov)
+    """mov = Ingreso("Nuevo concepto", date.today(), 1100)
+    dao.grabar(mov)"""
     
     movimiento = dao.leer(1)
     assert not movimiento is None
@@ -192,8 +192,44 @@ def test_delete_sqlite():
     movimiento = dao.leer(1)
     assert movimiento is None    
     
+
+def test_leerTodo_dao_sqlite():
+    borrar_movimientos_sqlite()
+    con = sqlite3.connect(RUTA_SQLITE)
+    cur = con.cursor()
+
+    query = "INSERT INTO movimientos (id, tipo_movimiento, concepto, fecha, cantidad, categoria) VALUES (?, ?, ?, ?, ?, ?)"
     
+    cur.executemany(query, [(1, "I", "Un ingreso cualquiera", date(2024, 5, 14), 100, None), 
+                            (2, "G", "Un gasto cualquiera", date(2024, 5, 1), 123, 3), 
+                            (6, "I", "nomina", date(2024, 5, 1), 1500, None), 
+                            (4, "G", "comida familiar", date(2024, 4, 6), 35, 3), 
+                            (8, "G", "zapatillas", date(2024, 5, 6), 57.5, 1), 
+                            (9, "G", "comida familiar", date(2024, 4, 16), 90, 3)])
     
+    con.commit()
+    con.close()
+
+    dao = DaoSqlite(RUTA_SQLITE)
+    movimiento = dao.leerTodo()
+   
+    movimiento1 = dao.leerTodo()
+    assert Ingreso("Un ingreso cualquiera", date(2024, 5, 14), 100) ==  movimiento[0]
+
+    movimiento2 = dao.leerTodo()
+    assert Gasto("Un gasto cualquiera", date(2024, 5, 1), 123, CategoriaGastos.OCIO_VICIO) == movimiento[1]
+
+    movimiento3 = dao.leerTodo()
+    assert Ingreso("nomina", date(2024, 5, 1), 1500) in movimiento
+
+    movimiento4 = dao.leerTodo()
+    assert Gasto("comida familiar", date(2024, 4, 6), 35, CategoriaGastos.OCIO_VICIO) in movimiento
+
+    movimiento5 = dao.leerTodo()
+    assert Gasto("zapatillas", date(2024, 5, 6), 57.5, CategoriaGastos.NECESIDAD) in movimiento
+
+    movimiento6 = dao.leerTodo()
+    assert Gasto("comida familiar", date(2024, 4, 16), 90, CategoriaGastos.OCIO_VICIO) in movimiento
     
 
     
