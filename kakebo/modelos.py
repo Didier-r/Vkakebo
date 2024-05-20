@@ -169,11 +169,28 @@ class DaoSqlite:
         con.commit()
         con.close()
 
-    def leerTodos(self):
-        """
-        Devuelve una lista con todos los registros de la tabla movimientos ordenados por id ascendente y cada item de la lista debe ser una instacia de Ingreso o Gasto (no la tupla que devuelve sqlite3)
-        """        
-        pass
+    
+     
+    def leerTodo(self):
+        con = sqlite3.connect(self.ruta)
+        cur = con.cursor()
+
+        query = "SELECT id, tipo_movimiento, concepto, fecha, cantidad, categoria FROM movimientos"
+
+        res = cur.execute(query)
+        valores = res.fetchall() # para coger de la base de datos 
+        con.close()
+        
+        lista_completa= []
+        for valor in valores :
+            if valor[1] == "I":
+                lista_completa.append(Ingreso(valor[2], date.fromisoformat(valor[3]), valor[4], valor[0]))
+                
+            elif valor[1] == "G":
+                lista_completa.append(Gasto(valor[2], date.fromisoformat(valor[3]), valor[4], CategoriaGastos(valor[5]), valores[0]))
+                
+        return lista_completa
+
         
        
         
