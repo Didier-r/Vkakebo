@@ -189,6 +189,21 @@ class DaoSqlite:
                 
         return lista_completa
 
-        
+    def leer_gasto_mayor(self,valor):
+
+        con = sqlite3.connect(self.ruta)
+        cur = con.cursor()
+
+        query="SELECT id, tipo_movimiento, concepto, fecha, cantidad, categoria FROM movimientos WHERE cantidad > ? AND tipo_movimiento=?"
+
+        res = cur.execute(query, (valor,"G"))
+        filas = res.fetchall()
+        con.close()
+
+        for valores in filas:
+            if valores[1]=="G":
+                id=valores[0]
+                Gasto(valores[2], date.fromisoformat(valores[3]), valores[4], CategoriaGastos(valores[5]), valores[0])
+                #print(id, valores[1],DaoSqlite.leer(self,id))       
        
         

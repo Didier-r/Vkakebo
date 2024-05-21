@@ -39,7 +39,7 @@ i1.pack(side=tk.TOP)
 i2 = Input(root, "Segundo Input", 310, 60)
 i2.pack(side=tk.TOP)
 
-di = DateInput(root, 250, 35)
+di = DateInput(root, 300, 35)
 di.pack(side=tk.TOP)
 
 root.mainloop()

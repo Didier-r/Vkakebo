@@ -232,6 +232,40 @@ def test_leerTodo_dao_sqlite():
     assert Gasto("comida familiar", date(2024, 4, 16), 90, CategoriaGastos.OCIO_VICIO) in movimiento
     
 
+def test_gasto_mayor():
+
+    borrar_movimientos_sqlite()
+    con = sqlite3.connect(RUTA_SQLITE)
+    cur = con.cursor()
+
+    query = "INSERT INTO movimientos (id, tipo_movimiento, concepto, fecha, cantidad, categoria) VALUES (?, ?, ?, ?, ?, ?)"
+
+    cur.executemany(query, ((1, "I", "Ejemplo ingreso id1", "2024-05-01", 100, None),
+                            (2, "I", "Ejemplo ingreso id2", "2024-05-02", 100, None),
+                            (3, "G", "Ejemplo gasto id3", "2024-05-03", 300, 1),
+                            (4, "G", "Ejemplo gasto id4", "2024-05-04", 301, 4),
+                            (5, "G", "Ejemplo gasto id5", "2024-05-05", 301, 4)))
     
+    con.commit()
+    con.close()
+
+    dao = DaoSqlite(RUTA_SQLITE)
+    
+    gasto=300
+    movto=dao.leer_gasto_mayor(gasto)
+    num_reg=5
+    
+    for i in range(1,num_reg+1):
+    
+        if i in range(1,4):
+            assert movto is None
+            
+     
+        else:
+                assert isinstance(movto,Gasto)    
+                assert movto.concepto == f"Ejemplo gasto id{i}"
+                assert movto.fecha == date(2024, 5, i)
+                assert movto.cantidad == 301.0
+                assert movto.categoria.value==4   
 
     
