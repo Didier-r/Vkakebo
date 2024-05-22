@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 
-from kakebo.vistas import Input, DateInput
+from kakebo.vistas import Input, DateInput, FormMovimiento
 """
 
 Jerarquia de controles a crear
@@ -41,5 +41,7 @@ i2.pack(side=tk.TOP)
 
 di = DateInput(root, 300, 35)
 di.pack(side=tk.TOP)
+
+form = FormMovimiento(root)
 
 root.mainloop()

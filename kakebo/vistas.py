@@ -5,18 +5,12 @@ class Input(tk.Frame):
     def __init__(self, parent, labelText, W, H):
         super().__init__(parent, width=W, height=H)
         self.pack_propagate(False)
-        lblFecha = tk.Label(self, text=labelText, anchor=tk.NW)
-        lblFecha.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-        self.varFecha = tk.StringVar()
-        inpFecha = tk.Entry(self, textvariable=self.varFecha)
-        inpFecha.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        lbl = tk.Label(self, text=labelText, anchor=tk.W)
+        lbl.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+
+        caja_input = tk.Entry(self)
+        caja_input.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         
-        btnAction = tk.Button(self, text="Clic", command=self.el_comando, width=12)
-        btnAction.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-        
-    def el_comando(self):
-        print(self.varFecha.get())
-        self.varFecha.set("Lolailo")
         
 
 class DateInput(tk.Frame):
@@ -122,3 +116,9 @@ class DateInput(tk.Frame):
             return False
         
         return True
+
+
+class FormMovimiento(tk.Frame):
+    def __init__(self, parent):
+        super().__init__(parent, width=550, height=200)
+        self.pack_propagate(False)
