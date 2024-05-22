@@ -24,7 +24,7 @@ Jerarquia de controles a crear
 root = tk.Tk()
 #root.pack_propagate()
 
-marco = tk.Frame(root, width=200, height=80, background="red")
+""" marco = tk.Frame(root, width=200, height=80, background="red")
 marco.pack()
 #marco.pack_propagate()
 lblFecha = tk.Label(marco, text="Fecha:", anchor=tk.NW)
@@ -41,7 +41,8 @@ i2.pack(side=tk.TOP)
 
 di = DateInput(root, 300, 35)
 di.pack(side=tk.TOP)
-
+ """
 form = FormMovimiento(root)
+form.pack(side=tk.TOP)
 
 root.mainloop()

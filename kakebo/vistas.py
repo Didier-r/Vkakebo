@@ -1,18 +1,69 @@
 import tkinter as tk
+from tkinter import ttk
 from datetime import date
+from kakebo import WIDTH, PAD_DEFAULT
+from kakebo.modelos import CategoriaGastos
 
 class Input(tk.Frame):
     def __init__(self, parent, labelText, W, H):
         super().__init__(parent, width=W, height=H)
         self.pack_propagate(False)
-        lbl = tk.Label(self, text=labelText, anchor=tk.W)
-        lbl.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        lbl = tk.Label(self, text=labelText, anchor=tk.W, width=10)
+        lbl.pack(side=tk.LEFT)
 
-        caja_input = tk.Entry(self)
-        caja_input.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        self.caja_input = tk.Entry(self)
+        self.caja_input.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        
+    def bind(self, event_type, callback):
+        self.caja_input.bind(event_type, callback)
+
+class NumberInput(Input):
+    def __init__(self, parent, labelText, W, H):
+        super().__init__(parent, labelText, W, H)
+        
+        validate_input = self.register(self.__validate_input)
+        self.caja_input.config(validate="key", validatecommand=(validate_input, "%P"))
+        
+    def __validate_input(self, candidato):
+        """
+        1. evaluar si se puede convertir en flotante. Si no devolvemos false
+        2. Si es vacio debe devolver true
+        """
+        if candidato in ("", "-"):
+            return True
+        
+        try:
+            float(candidato)
+            return True
+        except ValueError:
+            return False
+    
+    @property    
+    def value(self):
+        if self.caja_input.get() == "" or self.caja_input.get() == "-":
+            return None
+        else:
+            return float(self.caja_input.get())
+        
+class SelectInput(tk.Frame):
+    def __init__(self, parent, labelText, W, H, options):
+        super().__init__(parent, width=W, height=H)
+        self.pack_propagate(False)
+        
+        tk.Label(self, text=labelText, anchor=tk.W, width=10).pack(side=tk.LEFT)
+        
+        self.selected = tk.StringVar()
+        
+        valores_opciones = []
+        for cadena in options:
+            valores_opciones.append(cadena.name)
+            
+        self.caja_input = ttk.Combobox(self, values=valores_opciones, 
+                                       textvariable=self.selected,
+                                       state="readonly")
+        self.caja_input.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         
         
-
 class DateInput(tk.Frame):
     def __init__(self, parent, W, H, text="Fecha:"):
         super().__init__(parent, width=W, height=H)
@@ -117,8 +168,34 @@ class DateInput(tk.Frame):
         
         return True
 
-
 class FormMovimiento(tk.Frame):
     def __init__(self, parent):
-        super().__init__(parent, width=550, height=200)
+        super().__init__(parent, width=WIDTH, height=250, padx=PAD_DEFAULT, pady=PAD_DEFAULT)
         self.pack_propagate(False)
+        
+        self.fecha = DateInput(self,WIDTH, 40)
+        self.fecha.pack(side=tk.TOP)
+        
+        self.concepto = Input(self, "Concepto:", WIDTH, 40)
+        self.concepto.pack(side=tk.TOP)
+        
+        self.cantidad = NumberInput(self, "Cantidad:", WIDTH, 40)
+        self.cantidad.pack(side=tk.TOP)
+        self.cantidad.bind("<Key>", self.__control_categoria)
+        
+        self.categoria = SelectInput(self, "Categoria:", WIDTH, 40, CategoriaGastos)
+        self.categoria.pack(side=tk.TOP)
+        
+        fr = tk.Frame(self, pady=PAD_DEFAULT, height=40)
+        fr.pack(side=tk.TOP, expand=True, fill=tk.BOTH)
+        
+        btnCancelar = tk.Button(fr, text="Cancelar")
+        btnCancelar.pack(side=tk.LEFT, expand=True, fill=tk.BOTH)
+        
+        btnAceptar = tk.Button(fr, text="Aceptar")
+        btnAceptar.pack(side=tk.LEFT, expand=True, fill=tk.BOTH)
+    
+    def __control_categoria(self, ev):
+        print(self.cantidad.value)
+        
+        
